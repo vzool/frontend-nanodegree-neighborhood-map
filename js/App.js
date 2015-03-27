@@ -9,6 +9,9 @@ var ViewModel = function(){
 	// filter word in Neighbors list
 	this.word = ko.observable("");
 
+	this.gps_x = ko.observable();
+	this.gps_y = ko.observable();
+
 	// Neighbors Data
 	this.neighbor = ko.observableArray([
 		new Neighbor('Riyadh', 'Capital of Saudi Arabia', {x: 24.714400477165395, y: 46.731719970703125}),
@@ -23,38 +26,38 @@ var ViewModel = function(){
 		
 		if(self.word()){
 
-	        return ko.utils.arrayFilter(self.neighbor(), function(item) {
-	        	
-	        	// knockoutjs string comparison util
-            	return ko.utils.stringStartsWith(
-            		
-            		// knockoutjs string trim util
-            		ko.utils.stringTrim(item.getName().toLowerCase()),
+			return ko.utils.arrayFilter(self.neighbor(), function(item) {
+				
+				// knockoutjs string comparison util
+				return ko.utils.stringStartsWith(
+					
+					// knockoutjs string trim util
+					ko.utils.stringTrim(item.getName().toLowerCase()),
 
-            		// knockoutjs string trim util
-            		ko.utils.stringTrim(self.word().toLowerCase())
-            	);
-        	});
+					// knockoutjs string trim util
+					ko.utils.stringTrim(self.word().toLowerCase())
+				);
+			});
 
-	    } else {
-	        return self.neighbor();//unwrap the observable to return an array
-	    }
+		} else {
+			return self.neighbor();//unwrap the observable to return an array
+		}
 	});
 
 	// Change Neighbor location on map
 	this.ChangeNeiborhood = function(){
 
-    	var wiki_element = $("#wiki-data");
-    	var photoshot_element = $("#photoshot");
+		var wiki_element = $("#wiki-data");
+		var photoshot_element = $("#photoshot");
 
-    	var item; // current neighbor pointer
+		var item; // current neighbor pointer
 
-    	// check if ChangeNeiborhood called from ModelView Engine or from Visible
-    	if(this.location && this.location.x && this.location.y && this.getDesc){
-    		item = this;
-    	}else{
-    		item = self.neighbor()[0];
-    	}
+		// check if ChangeNeiborhood called from ModelView Engine or from Visible
+		if(this.location && this.location.x && this.location.y && this.getDesc){
+			item = this;
+		}else{
+			item = self.neighbor()[0];
+		}
 
 		// Wikipedia URL API which attached with city name
 		var WikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&callback=wikiCallback&format=json&search=" + item.getName();
@@ -62,41 +65,56 @@ var ViewModel = function(){
 		// Google Street View URL API which attached with city name
 		var GoogleStreetViewURL = "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ&size=200x200&location=" + item.getName();
 
-    	// Clear Marker if exists
-    	if(ko.Marker){
-    		ko.Marker.setMap(null);
-    	}
+		// Clear Marker if exists
+		if(ko.Marker){
+			ko.Marker.setMap(null);
+		}
 
-    	// set Place Corrdinates
-    	var LatLng = new google.maps.LatLng(item.location.x, item.location.y);
+		// Set Corrdinates on UI
+		self.gps_x(Number((item.location.x).toFixed(2)));
+		self.gps_y(Number((item.location.y).toFixed(2)));
 
-    	// map opetions
-    	var mapOptions = {
-    		center: LatLng,
+		console.log(self, this);
+
+		// set Place Corrdinates
+		var LatLng = new google.maps.LatLng(item.location.x, item.location.y);
+
+		// map opetions
+		var mapOptions = {
+			center: LatLng,
 			zoom: 5, 
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 
-        // create new map
-        ko.Map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
+		// create new map
+		ko.Map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
 		var marker, i;
-	    for (i = 0; i < self.neighbor().length; i++){  
+
+		// Make Multiple Marker
+		for (i = 0; i < self.neighbor().length; i++){ 
+
 			var pos = self.neighbor()[i].location;
+
+			// create Marker
 			marker = new google.maps.Marker({
 				position: new google.maps.LatLng(pos.x, pos.y),
 				map: ko.Map
 			});
 
+			// create Info Window
 			var infowindow = new google.maps.InfoWindow();
+
+			// bind marker click event with open info window about neighbor
 			google.maps.event.addListener(marker, 'click', (function(marker, i) {
-		        return function(){
-		          infowindow.setContent(self.neighbor()[i].name);
-		          infowindow.open(ko.Map, marker);
-		        }
-	      	})(marker, i));
-	    }
+
+				return function(){
+					infowindow.setContent(self.neighbor()[i].name);
+					infowindow.open(ko.Map, marker);
+				};
+
+			})(marker, i));
+		}
 
 		// Loading wiki about city
 		wiki_element.html("<p>Loading...</p>");
@@ -104,33 +122,33 @@ var ViewModel = function(){
 		// Timeout for 10 secs to show, if network connection failed.
 		var wikiTimeout = setTimeout(function(){
 			wiki_element.html("<p>Failed to get WikiPedia resources.</p>");
-    	}, 10000);
+		}, 10000);
 
 		// JSONP request send it to Wikipedia API Servers
-    	$.ajax( {
-	        url: WikipediaURL,
-	        dataType:'jsonp',
-	        error : function(jqXHR, textStatus, errorThrown){
-	            clearTimeout(wikiTimeout);
-	           	wiki_element.text("We can't fetch Wikipedia now, try again later.");
-	        },
-	        success : function(data){
-	            
-	            clearTimeout(wikiTimeout);
-	            wiki_element.text("");
-	            var title = data[1];
-	            var link = data[3];
+			$.ajax( {
+				url: WikipediaURL,
+				dataType:'jsonp',
+				error : function(jqXHR, textStatus, errorThrown){
+					clearTimeout(wikiTimeout);
+					wiki_element.text("We can't fetch Wikipedia now, try again later.");
+				},
+				success : function(data){
 
-	        	// check if no data then tell the user: No Data about XXX place
-	        	if(title.length == 0){
-	        		wiki_element.html('<p>No Data about ' + data[0] + '</p>');
-	        	}
+					clearTimeout(wikiTimeout);
+					wiki_element.text("");
+					var title = data[1];
+					var link = data[3];
 
-	            for(var i = 0; i < title.length; i++){
-	                wiki_element.append("<li><a target='_blank' href='"+link[i]+"'>" + title[i] + "</a></li>");   
-	            }
-	        }
-	    });
+					// check if no data then tell the user: No Data about XXX place
+					if(title.length === 0){
+						wiki_element.html('<p>No Data about ' + data[0] + '</p>');
+					}
+
+					for(var i = 0; i < title.length; i++){
+						wiki_element.append("<li><a target='_blank' href='"+link[i]+"'>" + title[i] + "</a></li>");   
+					}
+				}
+		});
 	
 		// Waiting message for loading google image
 		photoshot_element.html("<p>Loading...</p>");
@@ -147,12 +165,13 @@ var ViewModel = function(){
 				}
 			});
 		}, 1000);
-    };
+	};
 
-    this.init = function(){ // startup script
-    	this.ChangeNeiborhood();
-    };
+	// startup script
+	this.init = function(){
+		this.ChangeNeiborhood();
+	};
 };
 
 // Fire Knockout.js
-ko.applyBindings( new ViewModel());
+ko.applyBindings(new ViewModel());

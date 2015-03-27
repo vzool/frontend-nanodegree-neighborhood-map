@@ -32,7 +32,8 @@ The building blocks for my project is the following:
 
 ### Requirements
 
-To run this Web Application you will need a browser with specific version that fully supports the JavaScript,
+To run this Web Application you will need to open index.html in a browser.
+The Browser should be in specific versions that fully supports the JavaScript language,
 
 which those browsers and versions are:
 
@@ -67,3 +68,5 @@ So, documentations is my girlfriend.
 ### Licence
 
 It's Completely Free. But, Do whatever you like to do on your own full responsibility;
+
+This licence is known with [MIT License](http://opensource.org/licenses/MIT) in professional networks.

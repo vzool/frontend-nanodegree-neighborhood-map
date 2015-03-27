@@ -1,11 +1,11 @@
-"use strict"; // RUN Javascript in strict mode
+"use strict";// RUN Javascript in strict mode
 
 // Neighbor object
 var Neighbor = function(name, desc, location){
-	
+
 	// Name of Neighbor
 	this.name = name;
-	
+
 	// Description of Neighbor
 	this.desc = desc;
 	
@@ -54,22 +54,22 @@ var Neighbor = function(name, desc, location){
 	// set Location(x) of Neighbor
 	this.setX = function(x){
 		this.location.x = x;
-	}
+	};
 
 	// set Location(y) of Neighbor
 	this.setY = function(y){
 		this.location.y = y;
-	}
+	};
 
 	// get Location(x) of Neighbor
 	this.getX = function(){
 		return this.location.x;
-	}
+	};
 
 	// get Location(y) of Neighbor
 	this.getY = function(){
 		return this.location.y;
-	}
+	};
 
 	/*######################### Constuctor Section #########################*/
 	this.setName(name);
