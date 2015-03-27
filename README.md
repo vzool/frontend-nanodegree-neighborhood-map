@@ -1,6 +1,6 @@
 ## Frontend Nanodegree Neighborhood Map
 
-When I started to do this project, there is many not goes as I want for me, maybe at that time I don't understand knockoutjs.
+When I started to do this project, there is many things not goes as I want for me, maybe at that time I don't understand knockoutjs.
 
 Finally, I know knockoutjs now and I did it as I think.
 
