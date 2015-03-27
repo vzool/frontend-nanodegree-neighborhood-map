@@ -1,0 +1,22 @@
+@import url(http://fonts.googleapis.com/css?family=Oxygen:400,700);
+
+/*
+  Globals
+*/
+body {
+  margin: 0;
+  background: #556270;
+  color: #353d46;
+  font: 18px/27px 'Oxygen', sans-serif;
+}
+
+h1, h2, h3 {
+  color: #FF6B6B;
+  margin: 0 0 27px;
+}
+
+#map-canvas{
+	height: 500px;
+    margin: 0px;
+    padding: 0px
+}

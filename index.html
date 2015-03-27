@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Neighborhood Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  	<link rel="stylesheet" type="text/css" href="css/skeleton.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ"></script>
+  </head>
+  <body>
+  	<div class="container">
+  		<div class="row">
+  			<div class="two-thirds column">
+			    <h1>Neighborhood Map</h1>
+			    <div class="u-full-width" id="map-canvas" data-bind="map: neighbor"></div>
+  			</div>
+  			<div class="one-third column">
+  				<h2>Places List</h2>
+	  			<input id='word' autocomplete="off" placeholder='List Filter...' data-bind='textInput: word'>
+		    	<div class="listview" data-bind="foreach: filteredNeighbor">
+		    		<a data-bind="click: $parent.ChangeNeiborhood" href="javascript:;">
+		    			<p data-bind="text: name"></p>
+		    		</a>
+		    	</div>
+  			</div>
+  		</div>
+  		<div class="row">
+		    <div class="six columns">
+			    <div class="place-wiki">
+			    	<h3># Wiki Place</h3>
+			    	<div class="u-full-width" id="wiki-data"></div>
+			    </div>
+		    </div>
+		    <div class="six columns">
+			    <div class="place-photoshot">
+			    	<h3># Photoshot</h3>
+			    	<div id="photoshot" class="u-full-width"></div>
+			    </div>
+		    </div>
+  		</div>
+  	</div>
+  	<span data-bind="visible: init()"></span>
+  	<script type="text/javascript" src="js/knockout-3.3.0.debug.js"></script>
+  	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/Model.js"></script>
+	<script type="text/javascript" src="js/App.js"></script>
+  </body>
+</html>
