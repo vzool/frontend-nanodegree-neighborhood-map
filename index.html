@@ -6,44 +6,80 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
   	<link rel="stylesheet" type="text/css" href="css/skeleton.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.mmenu.all.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ"></script>
+  	<script type="text/javascript" src="js/jquery.js"></script>
+  	<script type="text/javascript" src="js/jquery.mmenu.min.all.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$("#menu").mmenu({
+			offCanvas: {
+					position: "top",
+					zposition: "front"
+				}
+			}).on('click', 'a[href^="#/"]', function(){
+					return false;
+				}
+			);
+		});
+	</script>
   </head>
   <body>
-  	<div class="container">
-  		<div class="row">
-  			<div class="two-thirds column">
-			    <h1>Neighborhood Map</h1>
-			    <div class="u-full-width" id="map-canvas" data-bind="map: neighbor"></div>
-  			</div>
-  			<div class="one-third column">
-  				<h2>Places List</h2>
-	  			<input id='word' autocomplete="off" placeholder='List Filter...' data-bind='textInput: word'>
-		    	<div class="listview" data-bind="foreach: filteredNeighbor">
-		    		<a data-bind="click: $parent.ChangeNeiborhood" href="javascript:;">
-		    			<p data-bind="text: name"></p>
-		    		</a>
-		    	</div>
-  			</div>
-  		</div>
-  		<div class="row">
-		    <div class="six columns">
-			    <div class="place-wiki">
-			    	<h3># Wiki Place</h3>
-			    	<div class="u-full-width" id="wiki-data"></div>
+  	<nav id="menu">
+		<div>
+			<h2>Places List</h2>
+			<input id='word' autocomplete="off" placeholder='List Filter...' data-bind='textInput: word'>
+			<ul class="listview" data-bind="foreach: filteredNeighbor">
+	    		<li>
+		    		<a data-bind="text: name, click: $parent.ChangeNeiborhood" href="#"></a>
+	    		</li>
+			</ul>
+		</div>
+	</nav>
+
+	<div id="page">
+		<div class="header">
+			<a href="#menu"></a>
+			Neighborhood Map
+		</div>
+		<div class="content">
+			
+	<div class="section">
+	  	<div class="container">
+	  		<div class="row">
+	  			<div class="two-thirds column">
+				    <a name="map-canvas">
+				    	<div class="u-full-width" id="map-canvas" name="map-canvas"></div>
+				    </a>
+	  			</div>
+	  		</div>
+	  	</div>
+	</div>
+
+		</div>
+	</div>
+
+	<div class="section">
+	  	<div class="container">
+	  		<div class="row">
+			    <div class="six columns">
+				    <div class="place-wiki">
+				    	<h3 class="section-heading"># Wiki Place</h3>
+				    	<div class="u-full-width" id="wiki-data"></div>
+				    </div>
 			    </div>
-		    </div>
-		    <div class="six columns">
-			    <div class="place-photoshot">
-			    	<h3># Photoshot</h3>
-			    	<div id="photoshot" class="u-full-width"></div>
+			    <div class="six columns">
+				    <div class="place-photoshot">
+				    	<h3 class="section-heading"># Photoshot</h3>
+				    	<div id="photoshot" class="u-full-width"></div>
+				    </div>
 			    </div>
-		    </div>
-  		</div>
-  	</div>
+	  		</div>
+	  	</div>
+	</div>
   	<span data-bind="visible: init()"></span>
-  	<script type="text/javascript" src="js/knockout-3.3.0.debug.js"></script>
-  	<script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/knockout-3.3.0.debug.js"></script>
 	<script type="text/javascript" src="js/Model.js"></script>
 	<script type="text/javascript" src="js/App.js"></script>
   </body>

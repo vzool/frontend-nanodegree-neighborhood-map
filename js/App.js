@@ -73,31 +73,30 @@ var ViewModel = function(){
     	// map opetions
     	var mapOptions = {
     		center: LatLng,
-			zoom: 6, 
+			zoom: 5, 
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
-        
+
         // create new map
         ko.Map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
-        // create new marker
-    	ko.Marker = new google.maps.Marker({
-    		title: item.getDesc(),
-		  	position: LatLng
-		});
 
-    	// bind marker to map
-		ko.Marker.setMap(ko.Map);
+		var marker, i;
+	    for (i = 0; i < self.neighbor().length; i++){  
+			var pos = self.neighbor()[i].location;
+			marker = new google.maps.Marker({
+				position: new google.maps.LatLng(pos.x, pos.y),
+				map: ko.Map
+			});
 
-		// create info box
-		var infowindow = new google.maps.InfoWindow({
-		  content: item.getDesc()
-		});
-
-		// bind click action on marker with open info box
-		google.maps.event.addListener(ko.Marker, 'click', function() {
-		  infowindow.open(ko.Map, ko.Marker);
-		});
+			var infowindow = new google.maps.InfoWindow();
+			google.maps.event.addListener(marker, 'click', (function(marker, i) {
+		        return function(){
+		          infowindow.setContent(self.neighbor()[i].name);
+		          infowindow.open(ko.Map, marker);
+		        }
+	      	})(marker, i));
+	    }
 
 		// Loading wiki about city
 		wiki_element.html("<p>Loading...</p>");
@@ -138,7 +137,15 @@ var ViewModel = function(){
 
 		// loading image from Google Street View if exists after 1 second.
 		setTimeout(function(){
-			photoshot_element.html("<img src='"+GoogleStreetViewURL+"'/>")
+			$.ajax({
+				url: GoogleStreetViewURL,
+				error : function(jqXHR, textStatus, errorThrown){
+					photoshot_element.html("No Connection");
+				},
+				success : function(data){
+					photoshot_element.html("<img src='"+GoogleStreetViewURL+"'/>");
+				}
+			});
 		}, 1000);
     };
 
