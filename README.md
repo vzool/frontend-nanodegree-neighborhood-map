@@ -18,12 +18,11 @@ Finally, I know knockoutjs now and I did it as I think.
 
 The building blocks for my project is the following:
 
-* [jquery](http://jquery.com): A DOM(Document Object Model) manipulation and ajax library. 
-* [getskeleton](http://getskeleton.com/): A Minimal HTML UI Framework that gives me a Grid system with good organizations toools.
+* [jQuery](http://jquery.com): A DOM(Document Object Model) manipulation and ajax library. 
+* [jQuery Mobile](https://jquerymobile.com/): jQuery Mobile is a HTML5-based user interface system designed to make responsive web sites and apps that are accessible on all smartphone, tablet and desktop devices.
 * [knockoutjs(Debug Version)](http://knockoutjs.com/downloads/knockout-3.3.0.debug.js): its a MVVM(Model View ViewModel) library and I spesific debug version because it contains a special functions not available in non-debug versions, those functions are:
 	1. ko.utils.arrayFilter: This function used in to return a filtered array with custom conditions.
 	2. ko.utils.stringTrim: This function is for Trim white spaces in head and tail of a string values if exists.
-* [jquery.mmenu](http://mmenu.frebsite.nl/): The best jQuery plugin for app look-alike on- and off-canvas menus with sliding submenus for your website and webapp.
 
 ### JavaScript File Structure
 

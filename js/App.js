@@ -20,10 +20,12 @@ var ViewModel = function(){
 		new Neighbor('Dammam', 'Eastern Coast Of Saudi Arabia', {x: 26.396790205102665, y: 50.03997802734375}),
 		new Neighbor('Luxor', 'A lot of Humans History resides there', {x: 25.6949411, y: 32.6594669})
 	]);
-
+	
 	// filter neighbor list by name or desc
 	this.filteredNeighbor = ko.computed(function() {
 		
+		var result;
+
 		if(self.word()){
 
 			return ko.utils.arrayFilter(self.neighbor(), function(item) {
@@ -42,6 +44,9 @@ var ViewModel = function(){
 		} else {
 			return self.neighbor();//unwrap the observable to return an array
 		}
+
+		/*self.ChangeNeiborhood();*/
+		return result;
 	});
 
 	// Change Neighbor location on map
@@ -60,10 +65,12 @@ var ViewModel = function(){
 		}
 
 		// Wikipedia URL API which attached with city name
-		var WikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&callback=wikiCallback&format=json&search=" + item.getName();
+		// var WikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&limit=5&callback=wikiCallback&format=json&search=" + item.getName();
+		var WikipediaURL = "http://ene.wikipedia.org/w/api.php?action=opensearch&limit=5&callback=wikiCallback&format=json&search=" + item.getName();
 		
 		// Google Street View URL API which attached with city name
-		var GoogleStreetViewURL = "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ&size=200x200&location=" + item.getName();
+		// var GoogleStreetViewURL = "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ&size=200x200&location=" + item.getName();
+		var GoogleStreetViewURL = "https://mapse.googleapis.com/maps/api/streetview?key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ&size=200x200&location=" + item.getName();
 
 		// Clear Marker if exists
 		if(ko.Marker){
@@ -73,8 +80,6 @@ var ViewModel = function(){
 		// Set Corrdinates on UI
 		self.gps_x(Number((item.location.x).toFixed(2)));
 		self.gps_y(Number((item.location.y).toFixed(2)));
-
-		console.log(self, this);
 
 		// set Place Corrdinates
 		var LatLng = new google.maps.LatLng(item.location.x, item.location.y);
@@ -92,9 +97,11 @@ var ViewModel = function(){
 		var marker, i;
 
 		// Make Multiple Marker
-		for (i = 0; i < self.neighbor().length; i++){ 
+		var neighbors = self.filteredNeighbor();
+		
+		for (i = 0; i < neighbors.length; i++){ 
 
-			var pos = self.neighbor()[i].location;
+			var pos = neighbors[i].location;
 
 			// create Marker
 			marker = new google.maps.Marker({
@@ -109,7 +116,7 @@ var ViewModel = function(){
 			google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
 				return function(){
-					infowindow.setContent(self.neighbor()[i].name);
+					infowindow.setContent(neighbors[i].desc);
 					infowindow.open(ko.Map, marker);
 				};
 
@@ -119,10 +126,10 @@ var ViewModel = function(){
 		// Loading wiki about city
 		wiki_element.html("<p>Loading...</p>");
 
-		// Timeout for 10 secs to show, if network connection failed.
+		// Timeout for 3 secs to show, if network connection failed.
 		var wikiTimeout = setTimeout(function(){
 			wiki_element.html("<p>Failed to get WikiPedia resources.</p>");
-		}, 10000);
+		}, 3000);
 
 		// JSONP request send it to Wikipedia API Servers
 			$.ajax( {
@@ -153,18 +160,16 @@ var ViewModel = function(){
 		// Waiting message for loading google image
 		photoshot_element.html("<p>Loading...</p>");
 
-		// loading image from Google Street View if exists after 1 second.
-		setTimeout(function(){
-			$.ajax({
-				url: GoogleStreetViewURL,
-				error : function(jqXHR, textStatus, errorThrown){
-					photoshot_element.html("No Connection");
-				},
-				success : function(data){
-					photoshot_element.html("<img src='"+GoogleStreetViewURL+"'/>");
-				}
-			});
-		}, 1000);
+		// loading image from Google Street View if exists.
+		$.ajax({
+			url: GoogleStreetViewURL,
+			error : function(jqXHR, textStatus, errorThrown){
+				photoshot_element.html("No Connection");
+			},
+			success : function(data){
+				photoshot_element.html("<img src='"+GoogleStreetViewURL+"'/>");
+			}
+		});
 	};
 
 	// startup script
