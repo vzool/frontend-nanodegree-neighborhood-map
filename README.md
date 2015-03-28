@@ -13,6 +13,7 @@ Finally, I know knockoutjs now and I did it as I think.
 6. Looking for Wikipedia API and implement in Knockoutjs..
 7. Looking for Google Street View API and implement in Knockoutjs.
 8. Connect anything together.
+9. Make things responsive for all devices.
 
 ### Building Blocks
 

@@ -8,23 +8,75 @@
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script src="lib/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyANpS9SfKEON6xP3VEO82mEYHm2xRNCctQ"></script>
-	<style type="text/css">#map-page, #map-canvas{width: 100%; height: 100%; padding: 0;}</style>
+	<style type="text/css">
+	#map-page, #map-canvas{width: 100%; height: 100%; padding: 0;}
+	.ui-panel-closed{width: 17em;}
+	.ui-panel-content-wrap.ui-body-c.ui-panel-animate.ui-panel-content-wrap-closed{margin-left:17em;}
+	.wise-text{text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+	</style>
+	<script type="text/javascript">
+	
+	var panel_class = "ui-panel-fixed ui-panel ui-panel-position-fixed ui-panel-display-overlay ui-panel-closed ui-body-inherit ui-panel-animate";
+
+	var responsive_panels = function(){
+		
+		if(window.screen.width > 1536){
+			
+			console.log('width', window.screen.width);
+			
+			$("#info-panel-btn").css('display', 'none');
+			$("#list-panel-btn").css('display', 'none');
+
+			panel_class.split(" ").forEach(function(c){
+				$("#info-panel").removeClass(c);
+				$("#list-panel").removeClass(c);
+			});
+
+			$("#map-canvas").css({float: 'left', width : '70%'});
+			$("#info-panel").css({float: 'left', width : '15%'});
+			$("#list-panel").css({float: 'left', width : '15%'});
+
+		}else{
+
+			$("#info-panel-btn").css('display', 'inline-block');
+			$("#list-panel-btn").css('display', 'inline-block');
+
+			panel_class.split(" ").forEach(function(c){
+				$("#info-panel").addClass(c);
+				$("#list-panel").addClass(c);
+			});
+
+			$("#map-canvas").css({float: 'left', width : '100%'});
+			$("#info-panel").css({float: 'left', width : 'auto'});
+			$("#list-panel").css({float: 'left', width : 'auto'});
+		}
+
+		$("#list-panel").trigger("updatelayout");
+		$("#info-panel").trigger("updatelayout");
+	};
+
+	$(function(){
+		responsive_panels();
+		$(window).resize(function(e){
+			responsive_panels();
+		});
+	});
+	</script>
 </head>
 <body>
 
 	<!-- ########################### [Main Page] ########################### -->
 	<div id="map-page" data-role="page">
 		<div data-role="header">
-			<a href="#list-panel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all"></a>
+			<a id="list-panel-btn" href="#list-panel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all"></a>
 			<h1>Neighborhood Map</h1>
-			<a href="#info-panel" class="ui-btn ui-icon-info ui-btn-icon-notext ui-corner-all"></a>
+			<a id="info-panel-btn" href="#info-panel" class="ui-btn ui-icon-info ui-btn-icon-notext ui-corner-all"></a>
 		</div>
-		<div role="main" class="ui-content" id="map-canvas"></div>
 		
 		<!-- ########################### [List Panel] ########################### -->
-		<div data-role="panel" id="list-panel" data-display="overlay">
+		<div id="list-panel" data-role="panel" data-display="overlay" data-position="left">
 			<h2>Places List</h2>
-			<input id='word' autocomplete="off" placeholder='List Filter...' data-bind='textInput: word'>
+			<input id='word' autocomplete="off" placeholder="List Filter..." data-bind='textInput: word'>
 			<ul class="listview" data-bind="foreach: filteredNeighbor">
 				<li>
 					<a data-bind="text: name, click: $parent.ChangeNeiborhood" href="#"></a>
@@ -32,11 +84,14 @@
 			</ul>
 		</div>
 		<!-- ########################### [List Panel] ########################### -->
+		
+		<div role="main" class="ui-content" id="map-canvas"></div>
+		
 
 		<!-- ########################### [Info Panel] ########################### -->
-		<div data-role="panel" id="info-panel" data-display="overlay" data-position="right">
+		<div id="info-panel" data-role="panel" data-display="overlay" data-position="right">
 			<h3># Wiki Place</h3>
-			<div id="wiki-data"></div>
+			<div id="wiki-data" class='wise-text'></div>
 			<h3># Photoshot</h3>
 			<div id="photoshot"></div>
 			<h3># Place Information</h3>
